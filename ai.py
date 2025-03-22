@@ -88,10 +88,9 @@ def insert_zero_width(text):
 def advanced_obfuscate(message):
     method = random.randint(1, 5)
     
-    if method == 1:  # Fernet + Base64 + zlib compression
-        compressed = zlib.compress(message.encode())
-        encrypted = cipher.encrypt(compressed)
-        return base64.b85encode(encrypted).decode()  # Sử dụng base85 thay vì base64
+    if method == 1:  # Fernet + Base64 (bỏ zlib)
+    encrypted = cipher.encrypt(message.encode())
+    return base64.b85encode(encrypted).decode()  # Sử dụng base85 thay vì base64  # Sử dụng base85 thay vì base64
         
     elif method == 2:  # Mã hóa Vigenère nâng cao
         key = ''.join(random.choices(string.ascii_letters, k=16))
@@ -197,14 +196,14 @@ def advanced_deobfuscate(obfuscated):
         return result
         
     else:
-        # Fernet + Base64 + zlib
-        try:
-            encrypted = base64.b85decode(obfuscated.encode())
-            decrypted = cipher.decrypt(encrypted)
-            return zlib.decompress(decrypted).decode()
-        except:
-            return obfuscated  # Trả về nguyên bản nếu không giải mã được
-
+    # Fernet + Base64 (bỏ zlib)
+    try:
+        encrypted = base64.b85decode(obfuscated.encode())
+        decrypted = cipher.decrypt(encrypted)
+        return decrypted.decode()
+    except:
+        return obfuscated  # Trả về nguyên bản nếu không giải mã được
+        
 # Kỹ thuật 5: Prompt injection nâng cao với kỹ thuật "Salami"
 def advanced_prompt_injection(message):
     # Kỹ thuật Salami - chia nhỏ prompt thành các phần được gán nhãn

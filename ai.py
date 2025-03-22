@@ -19,7 +19,7 @@ import time
 bot = AsyncTeleBot("7755708665:AAEOgUu_rYrPnGFE7_BJWmr8hw9_xrZ-5e0")
 
 # Cấu hình Gemini API
-GEMINI_API_KEY = "AIzaSyCl21Ku_prQnyMHFs_dJRL8-pgjg9hrc2"
+GEMINI_API_KEY = "AIzaSyAKfwbGxOKWssWgzoOQ-U5OXAdUemEseOg"
 genai.configure(api_key=GEMINI_API_KEY)
 
 # Khởi tạo Faker và Fernet

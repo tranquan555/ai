@@ -155,6 +155,23 @@ async def clear_history(update: Update, context: CallbackContext):
         user_data[user_id] = {"chat_history": [], "mode": "balanced", "role": "Software Engineer", "template_idx": 0}
         await update.message.reply_text("Lịch sử trò chuyện đã được khởi tạo.")
 
+# Hàm này sẽ được gọi thủ công thay vì tự động
+async def cleanup_inactive_users(update: Update, context: CallbackContext):
+    """Dọn dẹp dữ liệu người dùng không hoạt động."""
+    current_time = time.time()
+    inactive_threshold = 12 * 3600  # 12 giờ
+    
+    inactive_users = []
+    for user_id, data in user_data.items():
+        if "last_interaction" in data and (current_time - data["last_interaction"]) > inactive_threshold:
+            inactive_users.append(user_id)
+    
+    for user_id in inactive_users:
+        del user_data[user_id]
+    
+    count = len(inactive_users)
+    await update.message.reply_text(f"Đã dọn dẹp dữ liệu của {count} người dùng không hoạt động")
+
 def create_code_file(code_content, user_id, file_extension=".txt"):
     """Tạo file tạm thời chứa code."""
     file_name = f"code_{user_id}{file_extension}"
@@ -414,23 +431,6 @@ async def error(update: Update, context: CallbackContext):
     """Xử lý lỗi."""
     logger.warning(f"Update {update} gây ra lỗi {context.error}", exc_info=True)
 
-# Dọn dẹp dữ liệu người dùng không hoạt động
-async def cleanup_inactive_users(context: CallbackContext):
-    """Dọn dẹp dữ liệu người dùng không hoạt động."""
-    current_time = time.time()
-    inactive_threshold = 12 * 3600  # 12 giờ
-    
-    inactive_users = []
-    for user_id, data in user_data.items():
-        if "last_interaction" in data and (current_time - data["last_interaction"]) > inactive_threshold:
-            inactive_users.append(user_id)
-    
-    for user_id in inactive_users:
-        del user_data[user_id]
-    
-    if inactive_users:
-        logger.info(f"Đã dọn dẹp dữ liệu của {len(inactive_users)} người dùng không hoạt động")
-
 def main():
     """Khởi tạo và chạy bot."""
     application = Application.builder().token(TOKEN).build()
@@ -441,13 +441,14 @@ def main():
     application.add_handler(CommandHandler("mode", set_mode))
     application.add_handler(CommandHandler("role", set_role))
     application.add_handler(CommandHandler("template", set_template))
+    application.add_handler(CommandHandler("cleanup", cleanup_inactive_users))  # Thay đổi thành lệnh thủ công
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     application.add_handler(MessageHandler(filters.Document.ALL, handle_message))
     application.add_error_handler(error)
     
-    # Đặt lịch dọn dẹp dữ liệu người dùng không hoạt động
-    job_queue = application.job_queue
-    job_queue.run_repeating(cleanup_inactive_users, interval=3600)  # Chạy mỗi giờ
+    # Không sử dụng job_queue nữa - cần cài thêm gói nếu muốn dùng
+    # job_queue = application.job_queue
+    # job_queue.run_repeating(cleanup_inactive_users, interval=3600)
     
     logger.info("Bot đang chạy...")
     application.run_polling()

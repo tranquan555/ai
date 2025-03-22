@@ -88,9 +88,9 @@ def insert_zero_width(text):
 def advanced_obfuscate(message):
     method = random.randint(1, 5)
     
-    if method == 1:  # Fernet + Base64 (bỏ zlib)
-    encrypted = cipher.encrypt(message.encode())
-    return base64.b85encode(encrypted).decode()  # Sử dụng base85 thay vì base64  # Sử dụng base85 thay vì base64
+        if method == 1:  # Fernet + Base64 (bỏ zlib)
+        encrypted = cipher.encrypt(message.encode())
+        return base64.b85encode(encrypted).decode()
         
     elif method == 2:  # Mã hóa Vigenère nâng cao
         key = ''.join(random.choices(string.ascii_letters, k=16))

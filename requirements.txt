@@ -6,7 +6,6 @@ google-generativeai
 cryptography
 faker
 retrying
-zlib
 pycryptodome
 async-timeout
 aiohttp

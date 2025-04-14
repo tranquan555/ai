@@ -1,15 +1,3 @@
 python-telegram-bot
-telebot
-aiogram
-python-dotenv
-google-generativeai
-cryptography
-faker
-retrying
-pycryptodome
-async-timeout
-aiohttp
-ujson
-beautifulsoup4
-pytz
-python-dateutil
+scikit-learn
+numpy

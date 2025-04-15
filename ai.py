@@ -675,23 +675,25 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Lệnh /help - Hiển thị hướng dẫn chi tiết sử dụng HTML."""
-    # Sử dụng thẻ HTML chuẩn
+    # Sử dụng thẻ HTML chuẩn VÀ ESCAPE ký tự đặc biệt < > &
     help_text = (
         "📖 <b>Hướng Dẫn Sử Dụng Bot AI Tài Xỉu Nâng Cao</b> 📖\n\n"
         "--- <b>Lệnh Chính</b> ---\n"
         "🔹 <code>/predict</code>\n"
         "   Dự đoán kết quả tiếp theo dựa trên <b>toàn bộ</b> lịch sử bot đang ghi nhớ.\n\n"
+        # Escape < and > inside <code> tags for parameters
         "🔹 <code>/tx <lịch sử t/x></code>\n"
         "   Dự đoán kết quả tiếp theo dựa trên chuỗi Tài ('t') Xỉu ('x') bạn cung cấp.\n"
         "   <i>Ví dụ:</i> <code>/tx t x t t x x</code>\n"
         "   <i>Quan trọng:</i> Sau dự đoán, bot sẽ hỏi bạn kết quả <b>thực tế</b>.\n"
         "   => Việc bạn phản hồi <b>ĐÚNG / SAI</b> giúp bot <b>TỰ HỌC</b> và cải thiện!\n\n"
         "--- <b>Quản lý Dữ liệu</b> ---\n"
+        # Escape < and > inside <code> tags for parameters
         "🔹 <code>/add <lịch sử t/x></code>\n"
         "   Thêm <b>thủ công</b> một chuỗi kết quả vào bộ nhớ của bot.\n"
         "   <i>Ví dụ:</i> <code>/add x t t x</code>\n"
         "   <i>(Nên dùng feedback sau /tx thay vì lệnh này để đảm bảo chất lượng dữ liệu)</i>\n\n"
-        "🔹 <code>/history [số lượng]</code>\n"
+        "🔹 <code>/history [số lượng]</code>\n" # Dùng dấu ngoặc vuông [] thường an toàn hơn cho tùy chọn
         "   Xem lịch sử gần đây. Mặc định là 30.\n"
         "   <i>Ví dụ xem 50:</i> <code>/history 50</code>\n\n"
         "--- <b>Thông tin & Quản trị</b> ---\n" # Escape dấu &
@@ -705,16 +707,13 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "   💰 <b>CHƠI CÓ TRÁCH NHIỆM!</b>"
     )
     try:
+        # Gửi tin nhắn với parse_mode='HTML'
         await update.message.reply_text(help_text, parse_mode='HTML')
     except Exception as e:
-        # Nếu lỗi vẫn xảy ra, in lỗi cụ thể và gửi tin nhắn đơn giản hơn
+        # Log lỗi cụ thể hơn nếu vẫn còn
         print(f"!!!!!!!! LỖI TRONG HELP_COMMAND KHI GỬI HTML: {e}")
-        # Log traceback để xem chi tiết
-        # import traceback
-        # traceback.print_exception(type(e), e, e.__traceback__)
-        await update.message.reply_text("Rất tiếc, đã xảy ra lỗi khi hiển thị hướng dẫn chi tiết. Vui lòng thử lại sau hoặc liên hệ quản trị viên.")
-        # Không re-raise lỗi ở đây để error_handler chung không gửi thêm một tin nhắn lỗi nữa
-        # raise e # Nếu muốn error_handler vẫn log lỗi chung thì bỏ comment dòng này
+        # Gửi tin nhắn lỗi đơn giản nếu gửi HTML thất bại
+        await update.message.reply_text("Đã xảy ra lỗi khi hiển thị hướng dẫn. Vui lòng thử lại.")
         
 async def predict_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Lệnh /predict - Dự đoán dựa trên toàn bộ lịch sử hiện có."""

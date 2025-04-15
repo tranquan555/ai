@@ -674,37 +674,48 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.application._scheduler_started = True
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Lệnh /help - Hiển thị hướng dẫn chi tiết."""
+    """Lệnh /help - Hiển thị hướng dẫn chi tiết sử dụng HTML."""
+    # Sử dụng thẻ HTML chuẩn
     help_text = (
-        "📖 **Hướng Dẫn Sử Dụng Bot AI Tài Xỉu Nâng Cao** 📖\n\n"
-        "--- **Lệnh Chính** ---\n"
-        "🔹 **/predict**\n"
-        "   Dự đoán kết quả tiếp theo dựa trên **toàn bộ** lịch sử bot đang ghi nhớ.\n\n"
-        "🔹 **/tx <lịch sử t/x>**\n"
+        "📖 <b>Hướng Dẫn Sử Dụng Bot AI Tài Xỉu Nâng Cao</b> 📖\n\n"
+        "--- <b>Lệnh Chính</b> ---\n"
+        "🔹 <code>/predict</code>\n"
+        "   Dự đoán kết quả tiếp theo dựa trên <b>toàn bộ</b> lịch sử bot đang ghi nhớ.\n\n"
+        "🔹 <code>/tx <lịch sử t/x></code>\n"
         "   Dự đoán kết quả tiếp theo dựa trên chuỗi Tài ('t') Xỉu ('x') bạn cung cấp.\n"
-        "   *Ví dụ:* `/tx t x t t x x`\n"
-        "   *Quan trọng:* Sau dự đoán, bot sẽ hỏi bạn kết quả **thực tế**.\n"
-        "   => Việc bạn phản hồi **ĐÚNG / SAI** giúp bot **TỰ HỌC** và cải thiện!\n\n"
-        "--- **Quản lý Dữ liệu** ---\n"
-        "🔹 **/add <lịch sử t/x>**\n"
-        "   Thêm **thủ công** một chuỗi kết quả vào bộ nhớ của bot.\n"
-        "   *Ví dụ:* `/add x t t x`\n"
-        "   *(Nên dùng feedback sau /tx thay vì lệnh này để đảm bảo chất lượng dữ liệu)*\n\n"
-        "🔹 **/history [số lượng]**\n"
+        "   <i>Ví dụ:</i> <code>/tx t x t t x x</code>\n"
+        "   <i>Quan trọng:</i> Sau dự đoán, bot sẽ hỏi bạn kết quả <b>thực tế</b>.\n"
+        "   => Việc bạn phản hồi <b>ĐÚNG / SAI</b> giúp bot <b>TỰ HỌC</b> và cải thiện!\n\n"
+        "--- <b>Quản lý Dữ liệu</b> ---\n"
+        "🔹 <code>/add <lịch sử t/x></code>\n"
+        "   Thêm <b>thủ công</b> một chuỗi kết quả vào bộ nhớ của bot.\n"
+        "   <i>Ví dụ:</i> <code>/add x t t x</code>\n"
+        "   <i>(Nên dùng feedback sau /tx thay vì lệnh này để đảm bảo chất lượng dữ liệu)</i>\n\n"
+        "🔹 <code>/history [số lượng]</code>\n"
         "   Xem lịch sử gần đây. Mặc định là 30.\n"
-        "   *Ví dụ xem 50:* `/history 50`\n\n"
-        "--- **Thông tin & Quản trị** ---\n"
-        "🔹 **/status**\n"
+        "   <i>Ví dụ xem 50:</i> <code>/history 50</code>\n\n"
+        "--- <b>Thông tin & Quản trị</b> ---\n" # Escape dấu &
+        "🔹 <code>/status</code>\n"
         "   Kiểm tra trạng thái hiện tại của bot (số lượng dữ liệu, models, training).\n\n"
-        "🔹 **/train**\n"
-        "   *(Quản trị viên)* Buộc bot huấn luyện lại tất cả mô hình ngay lập tức với dữ liệu hiện tại. (Có thể mất thời gian)\n\n"
-        "--- **Nguyên tắc Vàng** ---\n"
-        "   🧠 Bot càng có nhiều dữ liệu **CHẤT LƯỢNG** (được xác nhận qua feedback), dự đoán càng có cơ sở.\n"
-        "   🎰 Luôn nhớ yếu tố **MAY MẮN** trong Tài Xỉu.\n"
-        "   💰 **CHƠI CÓ TRÁCH NHIỆM!**"
+        "🔹 <code>/train</code>\n"
+        "   <i>(Quản trị viên)</i> Buộc bot huấn luyện lại tất cả mô hình ngay lập tức với dữ liệu hiện tại. (Có thể mất thời gian)\n\n"
+        "--- <b>Nguyên tắc Vàng</b> ---\n"
+        "   🧠 Bot càng có nhiều dữ liệu <b>CHẤT LƯỢNG</b> (được xác nhận qua feedback), dự đoán càng có cơ sở.\n"
+        "   🎰 Luôn nhớ yếu tố <b>MAY MẮN</b> trong Tài Xỉu.\n"
+        "   💰 <b>CHƠI CÓ TRÁCH NHIỆM!</b>"
     )
-    await update.message.reply_text(help_text, parse_mode='HTML')
-
+    try:
+        await update.message.reply_text(help_text, parse_mode='HTML')
+    except Exception as e:
+        # Nếu lỗi vẫn xảy ra, in lỗi cụ thể và gửi tin nhắn đơn giản hơn
+        print(f"!!!!!!!! LỖI TRONG HELP_COMMAND KHI GỬI HTML: {e}")
+        # Log traceback để xem chi tiết
+        # import traceback
+        # traceback.print_exception(type(e), e, e.__traceback__)
+        await update.message.reply_text("Rất tiếc, đã xảy ra lỗi khi hiển thị hướng dẫn chi tiết. Vui lòng thử lại sau hoặc liên hệ quản trị viên.")
+        # Không re-raise lỗi ở đây để error_handler chung không gửi thêm một tin nhắn lỗi nữa
+        # raise e # Nếu muốn error_handler vẫn log lỗi chung thì bỏ comment dòng này
+        
 async def predict_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Lệnh /predict - Dự đoán dựa trên toàn bộ lịch sử hiện có."""
     current_history = list(history_data)

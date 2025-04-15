@@ -42,6 +42,7 @@ from tensorflow.keras.regularizers import l1_l2 # Thêm regularizers
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, constants
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes, MessageHandler, filters, escape_markdown
+from telegram.helpers import escape_markdown
 
 print("Các thư viện đã được import thành công!")
 

@@ -673,47 +673,51 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         schedule_background_training()
         context.application._scheduler_started = True
 
+from telegram.helpers import escape_markdown # Import the helper
+
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Lệnh /help - Hiển thị hướng dẫn chi tiết sử dụng HTML."""
-    # Sử dụng thẻ HTML chuẩn VÀ ESCAPE ký tự đặc biệt < > &
-    help_text = (
-        "📖 <b>Hướng Dẫn Sử Dụng Bot AI Tài Xỉu Nâng Cao</b> 📖\n\n"
-        "--- <b>Lệnh Chính</b> ---\n"
-        "🔹 <code>/predict</code>\n"
-        "   Dự đoán kết quả tiếp theo dựa trên <b>toàn bộ</b> lịch sử bot đang ghi nhớ.\n\n"
-        # Escape < and > inside <code> tags for parameters
-        "🔹 <code>/tx <lịch sử t/x></code>\n"
-        "   Dự đoán kết quả tiếp theo dựa trên chuỗi Tài ('t') Xỉu ('x') bạn cung cấp.\n"
-        "   <i>Ví dụ:</i> <code>/tx t x t t x x</code>\n"
-        "   <i>Quan trọng:</i> Sau dự đoán, bot sẽ hỏi bạn kết quả <b>thực tế</b>.\n"
-        "   => Việc bạn phản hồi <b>ĐÚNG / SAI</b> giúp bot <b>TỰ HỌC</b> và cải thiện!\n\n"
-        "--- <b>Quản lý Dữ liệu</b> ---\n"
-        # Escape < and > inside <code> tags for parameters
-        "🔹 <code>/add <lịch sử t/x></code>\n"
-        "   Thêm <b>thủ công</b> một chuỗi kết quả vào bộ nhớ của bot.\n"
-        "   <i>Ví dụ:</i> <code>/add x t t x</code>\n"
-        "   <i>(Nên dùng feedback sau /tx thay vì lệnh này để đảm bảo chất lượng dữ liệu)</i>\n\n"
-        "🔹 <code>/history [số lượng]</code>\n" # Dùng dấu ngoặc vuông [] thường an toàn hơn cho tùy chọn
-        "   Xem lịch sử gần đây. Mặc định là 30.\n"
-        "   <i>Ví dụ xem 50:</i> <code>/history 50</code>\n\n"
-        "--- <b>Thông tin & Quản trị</b> ---\n" # Escape dấu &
-        "🔹 <code>/status</code>\n"
-        "   Kiểm tra trạng thái hiện tại của bot (số lượng dữ liệu, models, training).\n\n"
-        "🔹 <code>/train</code>\n"
-        "   <i>(Quản trị viên)</i> Buộc bot huấn luyện lại tất cả mô hình ngay lập tức với dữ liệu hiện tại. (Có thể mất thời gian)\n\n"
-        "--- <b>Nguyên tắc Vàng</b> ---\n"
-        "   🧠 Bot càng có nhiều dữ liệu <b>CHẤT LƯỢNG</b> (được xác nhận qua feedback), dự đoán càng có cơ sở.\n"
-        "   🎰 Luôn nhớ yếu tố <b>MAY MẮN</b> trong Tài Xỉu.\n"
-        "   💰 <b>CHƠI CÓ TRÁCH NHIỆM!</b>"
+    """Lệnh /help - Hiển thị hướng dẫn chi tiết sử dụng MarkdownV2."""
+    # Using MarkdownV2 requires escaping special characters
+    help_text_md = (
+        "📖 *Hướng Dẫn Sử Dụng Bot AI Tài Xỉu Nâng Cao* 📖\n\n" # Use * for italic title
+        "--- *Lệnh Chính* ---\n"
+        "🔹 `/predict`\n" # Backticks for code
+        "   Dự đoán kết quả tiếp theo dựa trên *toàn bộ* lịch sử bot đang ghi nhớ\.\n\n" # Escape .
+        "🔹 `/tx <lịch sử t/x>`\n" # Backticks and literal < >
+        "   Dự đoán kết quả tiếp theo dựa trên chuỗi Tài \('t'\) Xỉu \('x'\) bạn cung cấp\.\n" # Escape ( ) .
+        "   _Ví dụ:_ `/tx t x t t x x`\n" # Underscore for italic
+        "   _Quan trọng:_ Sau dự đoán, bot sẽ hỏi bạn kết quả *thực tế*\.\n" # Escape .
+        "   => Việc bạn phản hồi *ĐÚNG / SAI* giúp bot *TỰ HỌC* và cải thiện\!\n\n" # Escape !
+        "--- *Quản lý Dữ liệu* ---\n"
+        "🔹 `/add <lịch sử t/x>`\n"
+        "   Thêm *thủ công* một chuỗi kết quả vào bộ nhớ của bot\.\n" # Escape .
+        "   _Ví dụ:_ `/add x t t x`\n"
+        "   _\(Nên dùng feedback sau /tx thay vì lệnh này để đảm bảo chất lượng dữ liệu\)_ \n\n" # Escape ( ) _
+        "🔹 `/history [số lượng]`\n" # Escape [ ]
+        "   Xem lịch sử gần đây\. Mặc định là 30\.\n" # Escape .
+        "   _Ví dụ xem 50:_ `/history 50`\n\n"
+        "--- *Thông tin & Quản trị* ---\n" # Escape & is not needed in Markdown
+        "🔹 `/status`\n"
+        "   Kiểm tra trạng thái hiện tại của bot \(số lượng dữ liệu, models, training\)\.\n\n" # Escape ( ) .
+        "🔹 `/train`\n"
+        "   _\(Quản trị viên\)_ Buộc bot huấn luyện lại tất cả mô hình ngay lập tức với dữ liệu hiện tại\. \(Có thể mất thời gian\)\n\n" # Escape ( ) .
+        "--- *Nguyên tắc Vàng* ---\n"
+        "   🧠 Bot càng có nhiều dữ liệu *CHẤT LƯỢNG* \(được xác nhận qua feedback\), dự đoán càng có cơ sở\.\n" # Escape ( ) .
+        "   🎰 Luôn nhớ yếu tố *MAY MẮN* trong Tài Xỉu\.\n" # Escape .
+        "   💰 *CHƠI CÓ TRÁCH NHIỆM\!*" # Escape !
     )
+
+    # It's often easier to escape the whole string, but let's try manual first
+    # If manual escaping is tedious or error-prone:
+    # final_text = escape_markdown(help_text_raw, version=2) # Where help_text_raw has no manual escapes
+
     try:
-        # Gửi tin nhắn với parse_mode='HTML'
-        await update.message.reply_text(help_text, parse_mode='HTML')
+        # Gửi tin nhắn với parse_mode='MarkdownV2'
+        await update.message.reply_text(help_text_md, parse_mode='MarkdownV2')
     except Exception as e:
-        # Log lỗi cụ thể hơn nếu vẫn còn
-        print(f"!!!!!!!! LỖI TRONG HELP_COMMAND KHI GỬI HTML: {e}")
-        # Gửi tin nhắn lỗi đơn giản nếu gửi HTML thất bại
-        await update.message.reply_text("Đã xảy ra lỗi khi hiển thị hướng dẫn. Vui lòng thử lại.")
+        print(f"!!!!!!!! LỖI TRONG HELP_COMMAND KHI GỬI MARKDOWNV2: {e}")
+        # Fallback to plain text if MarkdownV2 also fails
+        await update.message.reply_text("Đã xảy ra lỗi khi hiển thị hướng dẫn Markdown. Vui lòng thử lại.")
         
 async def predict_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Lệnh /predict - Dự đoán dựa trên toàn bộ lịch sử hiện có."""
